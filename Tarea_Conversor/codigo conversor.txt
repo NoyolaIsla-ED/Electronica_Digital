@@ -1,0 +1,170 @@
+package conversorr;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Conversor extends JFrame {
+
+    private JTextField txtNumero;
+    private JTextField txtResultado;
+    private JComboBox<String> cboOrigen;
+    private JComboBox<String> cboDestino;
+    private JTextArea txtProceso;
+
+    public Conversor() {
+
+        setTitle("Conversor de Sistemas Numéricos");
+        setSize(700, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        JLabel lblNumero = new JLabel("Número:");
+        lblNumero.setBounds(20, 20, 120, 25);
+        add(lblNumero);
+
+        txtNumero = new JTextField();
+        txtNumero.setBounds(150, 20, 200, 25);
+        add(txtNumero);
+
+        JLabel lblOrigen = new JLabel("Sistema origen:");
+        lblOrigen.setBounds(20, 60, 120, 25);
+        add(lblOrigen);
+
+        cboOrigen = new JComboBox<>(new String[]{
+            "Binario", "Octal", "Decimal", "Hexadecimal"
+        });
+        cboOrigen.setBounds(150, 60, 200, 25);
+        add(cboOrigen);
+
+        JLabel lblDestino = new JLabel("Sistema destino:");
+        lblDestino.setBounds(20, 100, 120, 25);
+        add(lblDestino);
+
+        cboDestino = new JComboBox<>(new String[]{
+            "Binario", "Octal", "Decimal", "Hexadecimal"
+        });
+        cboDestino.setBounds(150, 100, 200, 25);
+        add(cboDestino);
+
+        JButton btnConvertir = new JButton("Convertir");
+        btnConvertir.setBounds(20, 150, 150, 35);
+        add(btnConvertir);
+
+        JButton btnLimpiar = new JButton("Limpiar");
+        btnLimpiar.setBounds(200, 150, 150, 35);
+        add(btnLimpiar);
+
+        JLabel lblResultado = new JLabel("Resultado:");
+        lblResultado.setBounds(20, 210, 120, 25);
+        add(lblResultado);
+
+        txtResultado = new JTextField();
+        txtResultado.setBounds(150, 210, 200, 25);
+        txtResultado.setEditable(false);
+        add(txtResultado);
+
+        JLabel lblProceso = new JLabel("Proceso:");
+        lblProceso.setBounds(20, 250, 120, 25);
+        add(lblProceso);
+
+        txtProceso = new JTextArea();
+        txtProceso.setEditable(false);
+
+        JScrollPane scroll = new JScrollPane(txtProceso);
+        scroll.setBounds(20, 280, 640, 140);
+        add(scroll);
+
+        btnConvertir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+
+                    String numero = txtNumero.getText();
+
+                    int baseOrigen = obtenerBase(
+                            cboOrigen.getSelectedItem().toString());
+
+                    int baseDestino = obtenerBase(
+                            cboDestino.getSelectedItem().toString());
+
+                    int decimal = Integer.parseInt(numero, baseOrigen);
+
+                    String resultado = "";
+
+                    switch (baseDestino) {
+                        case 2:
+                            resultado = Integer.toBinaryString(decimal);
+                            break;
+                        case 8:
+                            resultado = Integer.toOctalString(decimal);
+                            break;
+                        case 10:
+                            resultado = String.valueOf(decimal);
+                            break;
+                        case 16:
+                            resultado = Integer.toHexString(decimal)
+                                    .toUpperCase();
+                            break;
+                    }
+
+                    txtResultado.setText(resultado);
+
+                    txtProceso.setText(
+                            "===== PROCESO =====\n\n"
+                            + "Número: " + numero + "\n"
+                            + "Origen: "
+                            + cboOrigen.getSelectedItem() + "\n"
+                            + "Destino: "
+                            + cboDestino.getSelectedItem() + "\n\n"
+                            + "Paso 1: Convertir a decimal\n"
+                            + "Resultado decimal: "
+                            + decimal + "\n\n"
+                            + "Paso 2: Convertir al sistema destino\n"
+                            + "Resultado final: "
+                            + resultado);
+
+                } catch (Exception ex) {
+
+                    JOptionPane.showMessageDialog(null,
+                            "Número inválido");
+                }
+            }
+        });
+
+        btnLimpiar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                txtNumero.setText("");
+                txtResultado.setText("");
+                txtProceso.setText("");
+            }
+        });
+    }
+
+    private int obtenerBase(String sistema) {
+
+        switch (sistema) {
+            case "Binario":
+                return 2;
+            case "Octal":
+                return 8;
+            case "Hexadecimal":
+                return 16;
+            default:
+                return 10;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Conversor().setVisible(true);
+            }
+        });
+    }
+}
